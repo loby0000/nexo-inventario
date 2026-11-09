@@ -85,7 +85,7 @@ describe("independent API authentication boundary", () => {
       .mockResolvedValueOnce(Response.json({ workspaces: [] }));
     vi.stubGlobal("fetch", f);
     const r = await worker.fetch(
-      request("bootstrap", { user: "attacker", role: "admin" }),
+      request("companies", { id: crypto.randomUUID(), name:"Mi empresa", user: "attacker", role: "admin" }),
       env,
     );
     expect(r.status).toBe(200);

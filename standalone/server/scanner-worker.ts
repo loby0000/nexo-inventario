@@ -1,3 +1,4 @@
+import {API_HEADERS,apiResponse,boundedJson,HttpError} from "./http-security";
 interface Env {
   ASSETS: Fetcher;
   NEXO_API: Fetcher;
@@ -12,7 +13,8 @@ export default {
       request.headers.get("Origin") &&
       request.headers.get("Origin") !== env.APP_ORIGIN
     )
-      return new Response(null, { status: 403 });
+      return apiResponse({error:"Origen no permitido."},403);
+    if(request.headers.get("Sec-Fetch-Site")==="cross-site")return apiResponse({error:"Origen no permitido."},403);
     // This narrow bridge cannot mutate inventory or expose the upstream server credentials.
     const allowed =
       (request.method === "GET" &&
@@ -21,30 +23,11 @@ export default {
         )) ||
       (request.method === "POST" &&
         ["/api/scanner/grant", "/api/device"].includes(url.pathname));
-    if (!allowed) return new Response(null, { status: 404 });
-    if (Number(request.headers.get("Content-Length") ?? 0) > 16384)
-      return new Response(null, { status: 413 });
+    if (!allowed) return apiResponse({error:"Ruta no encontrada."},404);
     let body: Uint8Array<ArrayBuffer> | undefined;
-    if (request.body) {
-      const reader = request.body.getReader(),
-        chunks: Uint8Array[] = [];
-      let size = 0;
-      for (;;) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        size += value.length;
-        if (size > 16384) {
-          await reader.cancel();
-          return new Response(null, { status: 413 });
-        }
-        chunks.push(value);
-      }
-      body = new Uint8Array(size);
-      let offset = 0;
-      for (const chunk of chunks) {
-        body.set(chunk, offset);
-        offset += chunk.length;
-      }
+    if(request.method === "POST") {
+      try { body=new TextEncoder().encode(JSON.stringify(await boundedJson(request,16384))); }
+      catch(e){return apiResponse({error:e instanceof HttpError?e.message:"Revisa los datos enviados."},e instanceof HttpError?e.status:400);}
     }
     const headers = new Headers();
     for (const name of ["Authorization", "Content-Type"])
@@ -63,6 +46,8 @@ export default {
     return new Response(result.body, {
       status: result.status,
       headers: {
+        ...API_HEADERS,
+        ...(result.headers.has("Retry-After")?{"Retry-After":result.headers.get("Retry-After")!}:{}),
         "Content-Type":
           result.headers.get("Content-Type") ?? "application/json",
         "Cache-Control": "no-store",

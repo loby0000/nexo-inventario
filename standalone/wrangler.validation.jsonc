@@ -24,5 +24,23 @@
     "TURNSTILE_SITE_KEY": "",
     "MAIL_PROVIDER": "brevo",
     "MAIL_FROM": "remitente@example.com"
-  }
+  },
+  "ratelimits": [
+    {
+      "name": "API_LIMITER",
+      "namespace_id": "2026110813",
+      "simple": {
+        "limit": 240,
+        "period": 60
+      }
+    },
+    {
+      "name": "INVITATION_LIMITER",
+      "namespace_id": "2026110814",
+      "simple": {
+        "limit": 6,
+        "period": 60
+      }
+    }
+  ]
 }

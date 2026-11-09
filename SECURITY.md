@@ -11,3 +11,7 @@ La versión actual utiliza Supabase Auth y una API de Cloudflare Workers. El ser
 - Conserva copias recuperables antes de migraciones. Las migraciones ya aplicadas no se deben editar ni repetir.
 
 Las pruebas del repositorio no constituyen una auditoría independiente. Si encuentras una vulnerabilidad, evita publicar claves o datos en un issue: utiliza el canal privado de seguridad de GitHub cuando esté disponible.
+
+## Refuerzo del sitio original
+
+Consulta la [revisión del 8 de noviembre de 2026](docs/REVISION-SEGURIDAD.md): límites de solicitudes, defensas de API, permisos efectivos y limitaciones pendientes.

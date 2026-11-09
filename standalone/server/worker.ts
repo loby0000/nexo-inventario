@@ -1,3 +1,4 @@
+import {apiResponse as response, HttpError, boundedJson, enforceLimit, type Limiter} from "./http-security";
 import { z } from "zod";
 import { validateAction, syncSchema } from "./contracts";
 import { invitationMailReady, deliverInvitation, type MailSettings } from "./email";
@@ -11,28 +12,13 @@ export interface Env extends MailSettings {
   SUPABASE_SECRET_KEY?: string;
   APP_ORIGIN: string;
   SCANNER_ORIGIN?: string;
+  API_LIMITER?: Limiter;
+  INVITATION_LIMITER?: Limiter;
   REGISTRATION_ENABLED: string;
   MAIL_FROM: string;
   RESEND_API_KEY?: string;
   SCANNER_SIGNING_KEY?: string;
   TURNSTILE_SITE_KEY?:string;
-}
-const response = (data: unknown, status = 200) =>
-  Response.json(data, {
-    status,
-    headers: {
-      "Cache-Control": "no-store",
-      "X-Content-Type-Options": "nosniff",
-      "Referrer-Policy": "same-origin",
-    },
-  });
-class HttpError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-  ) {
-    super(message);
-  }
 }
 export async function rpc(
   env: Env,
@@ -77,27 +63,6 @@ export async function rpc(
   }
   return result;
 }
-async function readBody(req: Request) {
-  if (!req.headers.get("Content-Type")?.startsWith("application/json"))
-    throw new HttpError("Envía los datos como JSON.", 415);
-  const reader = req.body?.getReader();
-  if (!reader) throw new HttpError("Faltan datos.", 400);
-  let n = 0,
-    text = "";
-  const decoder = new TextDecoder();
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    n += value.length;
-    if (n > 262144) {
-      await reader.cancel();
-      throw new HttpError("La operación supera el tamaño permitido.", 413);
-    }
-    text += decoder.decode(value, { stream: true });
-  }
-  text += decoder.decode();
-  return JSON.parse(text);
-}
 async function sendInvitation(
   env: Env,
   user: string,
@@ -128,6 +93,16 @@ export default {
         return response({ error: "Método no permitido." }, 405);
       if (req.headers.get("Origin") && req.headers.get("Origin") !== url.origin)
         throw new HttpError("Origen no permitido.", 403);
+      const methods: Record<string,string[]> = {
+        "/api/config":["GET"], "/api/bootstrap":["GET"], "/api/inventory":["GET","POST"],
+        "/api/companies":["POST"], "/api/invitations/accept":["POST"], "/api/transfer":["POST"],
+        "/api/scanner/grant":["POST"], "/api/device":["POST"], "/api/sync":["POST"],
+        "/api/conflicts":["GET"], "/api/conflicts/resolve":["POST"],
+      };
+      const allowed=Object.hasOwn(methods,url.pathname)?methods[url.pathname]:undefined;
+      if(!allowed)return response({error:"Ruta no encontrada."},404);
+      if(!allowed.includes(req.method))return response({error:"Método no permitido."},405,{Allow:allowed.join(", ")});
+      if(req.headers.get("Sec-Fetch-Site")==="cross-site")throw new HttpError("Origen no permitido.",403);
       if (url.pathname === "/api/config")
         return response({
           url: env.SUPABASE_URL,
@@ -138,7 +113,7 @@ export default {
           scannerOrigin:env.SCANNER_ORIGIN ?? (env.APP_ORIGIN.includes("validacion")?"https://nexo-escaner-validacion.loby207.workers.dev":"https://nexo-escaner.loby207.workers.dev"),
         });
       const token = req.headers.get("Authorization");
-      if (!token?.startsWith("Bearer "))
+      if (!token?.startsWith("Bearer ") || token.length > 16384 || token.length <= 7)
         throw new HttpError("Inicia sesión de nuevo.", 401);
       const auth = await fetch(env.SUPABASE_URL + "/auth/v1/user", {
         headers: { apikey: env.SUPABASE_PUBLISHABLE_KEY, Authorization: token },
@@ -154,7 +129,8 @@ export default {
         throw new HttpError("Verifica tu correo antes de continuar.", 403);
       const company = url.searchParams.get("company");
       if (company) z.string().uuid().parse(company);
-      const body = req.method === "POST" ? await readBody(req) : {};
+      await enforceLimit(env.API_LIMITER, "user:"+user.id);
+      const body = req.method === "POST" ? await boundedJson(req) : {};
       if (url.pathname === "/api/bootstrap")
         return response(await rpc(env, user.id, null, "bootstrap"));
       if (url.pathname === "/api/companies" && req.method === "POST")
@@ -218,6 +194,8 @@ export default {
             "Configura el envío de correo antes de invitar usuarios.",
             503,
           );
+        if(action.action === "member" || action.action === "resendInvitation")
+          await enforceLimit(env.INVITATION_LIMITER,"mail:"+user.id);
         const result = (await rpc(
           env,
           user.id,
@@ -284,7 +262,7 @@ export default {
       return response({ error: "Ruta no encontrada." }, 404);
     } catch (e) {
       if (e instanceof HttpError)
-        return response({ error: e.message }, e.status);
+        return response({ error: e.message }, e.status, e.status === 429 ? {"Retry-After":"60"} : {});
       if (e instanceof z.ZodError || e instanceof SyntaxError)
         return response({ error: "Revisa los datos enviados." }, 400);
       console.error(
