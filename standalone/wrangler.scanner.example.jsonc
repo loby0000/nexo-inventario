@@ -1,0 +1,25 @@
+{
+  "name": "mi-nexo-escaner",
+  "main": "server/scanner-worker.ts",
+  "compatibility_date": "2026-11-07",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./scanner-dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*"
+    ]
+  },
+  "services": [
+    {
+      "binding": "NEXO_API",
+      "service": "mi-nexo-inventario"
+    }
+  ],
+  "vars": {
+    "APP_ORIGIN": "https://mi-nexo-escaner.TU_SUBDOMINIO.workers.dev",
+    "UPSTREAM_ORIGIN": "https://mi-nexo-inventario.TU_SUBDOMINIO.workers.dev"
+  }
+}

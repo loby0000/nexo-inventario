@@ -1,0 +1,28 @@
+{
+  "name": "mi-nexo-inventario",
+  "main": "server/worker.ts",
+  "compatibility_date": "2026-11-06",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*"
+    ]
+  },
+  "vars": {
+    "SUPABASE_URL": "https://TU_REFERENCIA.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "TU_CLAVE_PUBLICABLE",
+    "APP_ORIGIN": "https://mi-nexo-inventario.TU_SUBDOMINIO.workers.dev",
+    "SCANNER_ORIGIN": "https://mi-nexo-escaner.TU_SUBDOMINIO.workers.dev",
+    "REGISTRATION_ENABLED": "false",
+    "TURNSTILE_SITE_KEY": "",
+    "MAIL_PROVIDER": "brevo",
+    "MAIL_FROM": "remitente@example.com"
+  }
+}

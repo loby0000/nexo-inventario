@@ -1,0 +1,72 @@
+# Dependencies
+/node_modules/
+/.pnp
+.pnp.*
+# Keep authored Yarn tooling if the project adopts Yarn.
+/.yarn/*
+!/.yarn/patches/
+!/.yarn/plugins/
+!/.yarn/releases/
+!/.yarn/versions/
+
+# Generated builds and framework state
+/dist/
+/.next/
+/.vinext/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Test output
+/coverage/
+
+# Package-manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Local environment and keys
+.env*
+.dev.vars*
+*.pem
+
+# Checkout-local tool state
+/.wrangler/
+/.sites-runtime/
+
+# Workspace scaffolding and publication archives
+/.agents/
+/.codex/
+/outputs/
+/work/
+
+# OS metadata
+.DS_Store
+
+# Spec Kit: retain generated Codex skills, exclude unrelated local agent state
+!/.agents/
+/.agents/*
+!/.agents/skills/
+/.agents/skills/*
+!/.agents/skills/speckit-*/
+
+# Independent app build and local tooling
+/standalone/dist/
+/standalone/.wrangler/
+/supabase/.temp/
+/standalone/work/
+/standalone/connector/bin/
+/standalone/connector/obj/
+/standalone/public/downloads/*.exe
+/standalone/public/downloads/*.bin
+/standalone/public/downloads/connector.json
+
+/standalone/scanner-dist/
+
+# Personal deployment configs and generated Python caches
+/standalone/wrangler.personal.jsonc
+/standalone/wrangler.local.jsonc
+/standalone/wrangler.scanner.personal.jsonc
+__pycache__/
+*.pyc

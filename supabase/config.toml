@@ -1,0 +1,2 @@
+[functions.nexo-api]
+verify_jwt = false

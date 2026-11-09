@@ -1,0 +1,1 @@
+do $$ declare t text; begin foreach t in array array['products','documents','movements','members','workspaces','requests','migrations','transport_requests'] loop execute format('create policy deny_browser_access on nexo.%I as restrictive for all to anon,authenticated using(false) with check(false)',t); end loop; end $$;

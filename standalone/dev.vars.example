@@ -1,0 +1,5 @@
+# Copia a standalone/.dev.vars. Nunca lo publiques con valores reales.
+SUPABASE_SECRET_KEY="TU_CLAVE_SECRETA_SOLO_SERVIDOR"
+# JWK privada: JSON completo en una sola línea, entre comillas simples.
+SCANNER_SIGNING_KEY='TU_JWK_PRIVADA'
+BREVO_API_KEY="TU_CLAVE_API_NO_SMTP"

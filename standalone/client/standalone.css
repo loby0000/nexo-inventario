@@ -1,0 +1,277 @@
+.connection-bar {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 10px 20px;
+  background: #e9efe4;
+  color: #244b3e;
+  font-size: 12px;
+  border-bottom: 1px solid #d4dfcf;
+}
+.connection-bar .btn {
+  padding: 6px 10px;
+  font-size: 11px;
+}
+.standalone-alert {
+  padding: 12px 20px;
+  background: #fff0db;
+  color: #704918;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+.tenant-switch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 20px;
+  background: #fff;
+}
+.tenant-switch label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+.tenant-switch select {
+  padding: 6px 12px;
+  max-width: 260px;
+}
+/* Keep the independent controls outside the fixed inventory sidebar. */
+.inventory-visible > :is(.connection-bar, .tenant-switch, .standalone-alert, .pending-list) {
+  margin-left: 236px;
+}
+@media (max-width: 1200px) {
+  .inventory-visible > :is(.connection-bar, .tenant-switch, .standalone-alert, .pending-list) { margin-left: 210px; }
+}
+@media (max-width: 900px) {
+  .inventory-visible > :is(.connection-bar, .tenant-switch, .standalone-alert, .pending-list) { margin-left: 190px; }
+}
+@media (max-width: 650px) {
+  .inventory-visible > :is(.connection-bar, .tenant-switch, .standalone-alert, .pending-list) { margin-left: 0; }
+}
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at top left, #dce9d5, transparent 60%), #f4f6f1;
+}
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: white;
+  border: 1px solid #dce4d8;
+  border-radius: 20px;
+  padding: 38px;
+  box-shadow: 0 20px 90px #2348390b;
+}
+.auth-card h1 {
+  font-size: 27px;
+  margin: 28px 0 12px;
+}
+.auth-card form,
+.onboarding form {
+  display: grid;
+  gap: 18px;
+  margin: 24px 0;
+}
+.auth-card label,
+.onboarding label,
+.label-controls label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+}
+.auth-card p,
+.onboarding p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #677663;
+}
+.auth-card input,
+.onboarding input,
+.label-controls input,
+.label-controls select {
+  padding: 12px;
+  border: 1px solid #d5dfd3;
+  border-radius: 8px;
+  width: 100%;
+}
+.auth-links,
+.button-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.auth-card .brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.auth-card small {
+  font-size: 12px;
+  color: #71806e;
+}
+.onboarding {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 28px;
+}
+.company-card {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 12px 0;
+  padding: 18px;
+  gap: 16px;
+}
+.pending-list {
+  position: relative;
+  margin: 20px;
+  padding: 18px;
+  background: #fff5df;
+  border: 1px solid #ead4a6;
+  border-radius: 12px;
+  font-size: 13px;
+}
+.camera-preview {
+  display: block;
+  width: 100%;
+  max-height: 340px;
+  background: #1c2c25;
+  border-radius: 12px;
+  margin: 18px 0;
+}
+.label-controls {
+  display: flex;
+  gap: 18px;
+  margin: 20px 0;
+  align-items: end;
+  flex-wrap: wrap;
+}
+.label-sheet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3mm;
+  background: white;
+  padding: 5mm;
+}
+.barcode-label {
+  width: 50mm;
+  height: 30mm;
+  border: 1px dashed #ddd;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2mm;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.barcode-label strong {
+  font-size: 10px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.barcode-label svg {
+  width: 46mm;
+  height: 17mm;
+}
+.barcode-label span {
+  font-size: 10px;
+}
+.modal.wide-modal {
+  max-height: 90vh;
+  overflow: auto;
+}
+.modal .icon-btn {
+  float: right;
+}
+.modal p {
+  line-height: 1.6;
+}
+.modal .button-row {
+  margin: 16px 0;
+}
+.modal form {
+  margin: 16px 0;
+}
+.modal form label {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0;
+}
+.modal form input,
+.modal form select {
+  padding: 10px;
+  border: 1px solid #d8dfd5;
+  border-radius: 8px;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  body * {
+    visibility: hidden !important;
+  }
+  .label-sheet,
+  .label-sheet * {
+    visibility: visible !important;
+  }
+  .label-sheet {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 190mm;
+    display: flex;
+    gap: 3mm;
+    padding: 0;
+  }
+  .barcode-label {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .modal-backdrop,
+  .modal.wide-modal {
+    position: static !important;
+    overflow: visible !important;
+    max-height: none !important;
+    display: block !important;
+    background: none !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  .barcode-label {
+    border: 0;
+  }
+}
+@media (max-width: 700px) {
+  .connection-bar {
+    padding: 10px;
+    font-size: 11px;
+  }
+  .auth-card {
+    padding: 24px;
+  }
+  .tenant-switch {
+    padding: 8px 12px;
+  }
+  .connection-bar span {
+    max-width: 100%;
+  }
+  .onboarding {
+    margin: 10px auto;
+  }
+}

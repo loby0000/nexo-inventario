@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1793940642220,
+      "tag": "0000_medical_terrax",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1793942530409,
+      "tag": "0001_shocking_roughhouse",
+      "breakpoints": true
+    }
+  ]
+}
