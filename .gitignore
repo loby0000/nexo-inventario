@@ -44,13 +44,6 @@ yarn-error.log*
 # OS metadata
 .DS_Store
 
-# Spec Kit: retain generated Codex skills, exclude unrelated local agent state
-!/.agents/
-/.agents/*
-!/.agents/skills/
-/.agents/skills/*
-!/.agents/skills/speckit-*/
-
 # Independent app build and local tooling
 /standalone/dist/
 /standalone/.wrangler/
